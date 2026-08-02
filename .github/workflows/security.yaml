@@ -1,0 +1,84 @@
+name: Reusable Security Scan
+
+on:
+  workflow_call:
+    inputs:
+      service_path:
+        description: "Caminho do microsserviço (ex: ./app/volunteer-service)"
+        required: true
+        type: string
+      language:
+        description: "Linguagem do microsserviço (python ou go)"
+        required: true
+        type: string
+        
+  workflow_dispatch:
+    inputs:
+      service_path:
+        description: "Caminho do microsserviço (ex: ./app/volunteer-service)"
+        required: true
+        type: string
+        default: "./app/volunteer-service"
+      language:
+        description: "Linguagem do microsserviço (python ou go)"
+        required: true
+        type: choice
+        options:
+          - python
+          - go
+
+jobs:
+  python-sast:
+    name: Code Security (Python - Bandit)
+    if: ${{ inputs.language == 'python' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install Bandit
+        run: pip install bandit
+
+      - name: Run Bandit Scan
+        run: bandit -r ${{ inputs.service_path }} -ll -ii
+
+  go-sast:
+    name: Code Security (Go - GoSec)
+    if: ${{ inputs.language == 'go' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Install gosec
+        run: go install github.com/securego/gosec/v2/cmd/gosec@latest
+
+      - name: Run GoSec Scan
+        run: gosec -no-fail -fmt=golint ${{ inputs.service_path }}/...
+
+  trivy-scan:
+    name: Dependency & Container Security (Trivy)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy scanner on microservice path
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: ${{ inputs.service_path }}
+          format: 'table'
+          exit-code: '0' # Mude para '1' caso queira reprovar a esteira por falha
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
