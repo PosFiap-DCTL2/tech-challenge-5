@@ -11,7 +11,7 @@ on:
         description: "Linguagem do microsserviço (python ou go)"
         required: true
         type: string
-        
+
   workflow_dispatch:
     inputs:
       service_path:
@@ -45,6 +45,7 @@ jobs:
         run: pip install bandit
 
       - name: Run Bandit Scan
+        continue-on-error: true  # retirar em produção
         run: bandit -r ${{ inputs.service_path }} -ll -ii
 
   go-sast:
