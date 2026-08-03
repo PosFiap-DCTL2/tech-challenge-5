@@ -1,0 +1,27 @@
+name: AWS Deploy
+on:
+  workflow_call:
+    inputs:
+      service_name:
+        required: true
+        type: string
+        
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      # 1. Configura a AWS no Job atual (usando as secrets do repositório)
+      - name: Configurar credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+          
+      # 2. Faz o build e push do serviço que foi passado como parâmetro
+      - name: Build and Push to ECR
+        run: |
+          echo "Fazendo build do microsserviço: ${{ inputs.service_name }}"
+          # comandos do docker build e aws ecr push aqui...

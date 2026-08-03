@@ -6,7 +6,7 @@ on:
     paths:
       - 'app/volunteer-service/**'
   pull_request:
-    branches: [ "main", "master" ]
+    branches: [ "main"]
     paths:
       - 'app/volunteer-service/**'
   workflow_dispatch:
@@ -48,3 +48,11 @@ jobs:
       - name: Test Docker Build
         # Constrói o container de forma isolada para garantir que o Dockerfile está funcional
         run: docker build -t volunteer-service:test ./app/volunteer-service
+
+  # 3. Pipeline de Deploy
+  deploy:
+    needs: build
+    uses: ./.github/workflows/aws-deploy.yaml
+    with:
+      service_name: 'volunteer-service'
+    secrets: inherit # Importante: permite que o workflow reutilizável acesse as secrets do repositório
