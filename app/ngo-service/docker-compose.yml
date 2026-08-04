@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # 1. O BANCO DE DADOS (PostgreSQL)
+  # ==========================================
+  db:
+    image: postgres:15-alpine
+    container_name: ngo_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ngo_db
+    ports:
+      - "5432:5432"
+    volumes:
+      #  Pega o script pedido no edital e injeta no banco de dados na hora de ligar
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  # ==========================================
+  # 2. (NGO Service)
+  # ==========================================
+  api:
+    build: .
+    container_name: ngo_api
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      PORT: 8081
+      # Como estamos dentro do Docker, trocamos "localhost" pelo nome do serviço ("db")
+      DATABASE_URL: "postgres://postgres:postgres@db:5432/ngo_db"
+      OTEL_SERVICE_NAME: "ngo-service"
+    depends_on:
+      - db
