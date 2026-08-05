@@ -6,3 +6,7 @@ CREATE TABLE IF NOT EXISTS donations (
     status VARCHAR(20) NOT NULL, -- Ex: APPROVED, PENDING
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE INDEX IF NOT EXISTS idx_donations_ngo_id ON donations(ngo_id);
+CREATE INDEX IF NOT EXISTS idx_donations_status ON donations(status);
+CREATE INDEX IF NOT EXISTS idx_donations_created_at ON donations(created_at DESC);
