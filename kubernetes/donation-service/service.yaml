@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: donation-service-clusterip
+  namespace: donation-service
+  labels:
+    app: donation-service
+spec:
+  selector:
+    app: donation-service
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8082
+      targetPort: 8082
+      protocol: TCP
