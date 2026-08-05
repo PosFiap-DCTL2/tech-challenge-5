@@ -1,13 +1,13 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: ngo-hpa
-  namespace: ngo-service
+  name: volunteer-hpa
+  namespace: volunteer-service
 spec:
   scaleTargetRef: # O recurso que o HPA vai escalar
     apiVersion: apps/v1
     kind: Deployment
-    name: ngo-deploy
+    name: volunteer-deploy
   minReplicas: 1  # Mínimo de pods
   maxReplicas: 3 # Máximo de pods
   metrics:        # Critérios para escalonamento
@@ -16,4 +16,4 @@ spec:
       name: cpu
       target:
         type: Utilization
-        averageUtilization: 70 # Escala se a CPU média passar de 50%
+        averageUtilization: 70 # Escala se a CPU média passar de 70%
