@@ -17,3 +17,11 @@ variable "instanceclass" {
     type        = string
     default     = "db.t3.micro"
 }
+
+variable "network" {
+  description = "Configurações de rede para o Redis"
+  type = object({
+    subnet_group_id   = string
+    security_group_id = string
+  })
+}
