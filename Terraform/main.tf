@@ -12,8 +12,45 @@ provider "aws" {
   region = "us-east-1"
 }
 
-#module "EKS_cluster" {
-#  source           = "./EKS"
-#  subnets          = module.Networking.eks_subnet_ids
-#  grupodeseguranca = module.Networking.eks_security_group_id
-#}
+module "Networking" {
+  source = "./Networking"
+  eks_security_group_id = module.EKS_cluster.cluster_security_group_id
+}
+
+module "EKS_cluster" {
+  source           = "./EKS"
+  subnets          = module.Networking.eks_subnet_ids
+  grupodeseguranca = module.Networking.eks_security_group_id
+}
+
+module "ECR_donation_service" {
+  source = "./ECR/donation_service"
+}
+
+module "ECR_ngo_service" {
+  source = "./ECR/ngo_service"
+}
+
+module "ECR_volunteer_service" {
+  source = "./ECR/volunteer_service"
+}
+
+module "dynamodb" {
+  source = "./DYNAMODB"
+}
+
+module "SQS" {
+  source = "./SQS"
+}
+
+module "RDS_donation_db" {
+  source = "./RDS/donation_db"
+  network = module.Networking.rds_config
+}
+
+module "RDS_ngo_db" {
+  source = "./RDS/ngo_db"
+  network = module.Networking.rds_config
+}
+
+
