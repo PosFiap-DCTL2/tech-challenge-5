@@ -6,6 +6,4 @@ metadata:
   labels:
     app: donation-service
 data:
-  PORT: "8082"
-  AWS_REGION: "us-east-1"
   AWS_SQS_URL: "https://sqs.us-east-1.amazonaws.com/000000000000/CHANGE_ME"
