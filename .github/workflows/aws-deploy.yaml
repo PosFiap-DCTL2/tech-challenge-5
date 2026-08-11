@@ -5,13 +5,13 @@ on:
       service_name:
         required: true
         type: string
-        
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       # 1. Configura a AWS no Job atual (usando as secrets do repositório)
       - name: Configurar credenciais AWS
         uses: aws-actions/configure-aws-credentials@v4
@@ -20,7 +20,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1
-          
+
       # 2. Faz o login no Amazon ECR
       - name: Login no Amazon ECR
         id: login-ecr
@@ -38,10 +38,10 @@ jobs:
 
           cd app/${{ inputs.service_name }}
 
-          # Build
-          docker build -t tech5/${{ inputs.service_name }}:${{ github.sha }} .
-          docker build -t tech5/${{ inputs.service_name }}:latest .
-          
+          # Build e Tag
+          docker build -t $REGISTRY/$REPOSITORY:${{ github.sha }} .
+          docker tag $REGISTRY/$REPOSITORY:${{ github.sha }} $REGISTRY/$REPOSITORY:latest
+
           # Push
-          docker push tech5/${{ inputs.service_name }}:${{ github.sha }}
-          docker push tech5/${{ inputs.service_name }}:latest
+          docker push $REGISTRY/$REPOSITORY:${{ github.sha }}
+          docker push $REGISTRY/$REPOSITORY:latest
