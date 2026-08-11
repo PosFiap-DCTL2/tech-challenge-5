@@ -21,17 +21,23 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1
           
-      # 2. Faz o build e push do serviço que foi passado como parâmetro
+      # 2. Faz o login no Amazon ECR
+      - name: Login no Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # 3. Faz o build e push do serviço que foi passado como parâmetro
       - name: Build and Push to ECR
+
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: tech5/${{ inputs.service_name }}
+          IMAGE_TAG: ${{ github.sha }}
         run: |
           echo "Fazendo build do microsserviço: ${{ inputs.service_name }}"
           
-          # Preencha a URL do seu repositório ECR ou outro Registry abaixo
-          REGISTRY_URL="401260453914.dkr.ecr.us-east-1.amazonaws.com/tech5"
-          IMAGE_TAG="${{ github.sha }}"
-          FULL_IMAGE_NAME="$REGISTRY_URL/${{ inputs.service_name }}:$IMAGE_TAG"
+          FULL_IMAGE_NAME="$REGISTRY/$REPOSITORY:$IMAGE_TAG"
           
-          # Entre no diretório do microsserviço
           cd app/${{ inputs.service_name }}
           
           # Build
