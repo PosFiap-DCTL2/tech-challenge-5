@@ -39,9 +39,9 @@ jobs:
           cd app/${{ inputs.service_name }}
 
           # Build
-          docker build -t tech5/${{ inputs.service_name }}:${{ github.sha::7 }} .
+          docker build -t tech5/${{ inputs.service_name }}:${{ github.sha }} .
           docker build -t tech5/${{ inputs.service_name }}:latest .
           
           # Push
-          docker push tech5/${{ inputs.service_name }}:${{ github.sha::7 }}
+          docker push tech5/${{ inputs.service_name }}:${{ github.sha }}
           docker push tech5/${{ inputs.service_name }}:latest
