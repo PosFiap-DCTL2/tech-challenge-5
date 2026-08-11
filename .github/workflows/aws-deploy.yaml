@@ -18,10 +18,24 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1
           
       # 2. Faz o build e push do serviço que foi passado como parâmetro
       - name: Build and Push to ECR
         run: |
           echo "Fazendo build do microsserviço: ${{ inputs.service_name }}"
-          # comandos do docker build e aws ecr push aqui...
+          
+          # Preencha a URL do seu repositório ECR ou outro Registry abaixo
+          REGISTRY_URL="401260453914.dkr.ecr.us-east-1.amazonaws.com/tech5"
+          IMAGE_TAG="${{ github.sha }}"
+          FULL_IMAGE_NAME="$REGISTRY_URL/${{ inputs.service_name }}:$IMAGE_TAG"
+          
+          # Entre no diretório do microsserviço
+          cd app/${{ inputs.service_name }}
+          
+          # Build
+          docker build -t $FULL_IMAGE_NAME .
+          
+          # Push
+          docker push $FULL_IMAGE_NAME
