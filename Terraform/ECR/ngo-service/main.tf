@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "ngo-service" {
-  name                 = "ngo-service"
+  name                 = "tech5/ngo-service"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {

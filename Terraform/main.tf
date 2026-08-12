@@ -24,15 +24,15 @@ module "EKS_cluster" {
 }
 
 module "ECR_donation_service" {
-  source = "./ECR/donation_service"
+  source = "./ECR/donation-service"
 }
 
 module "ECR_ngo_service" {
-  source = "./ECR/ngo_service"
+  source = "./ECR/ngo-service"
 }
 
 module "ECR_volunteer_service" {
-  source = "./ECR/volunteer_service"
+  source = "./ECR/volunteer-service"
 }
 
 module "dynamodb" {
