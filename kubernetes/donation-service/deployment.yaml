@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: donation-service
-          image: 000000000000.dkr.ecr.us-east-1.amazonaws.com/donation-service:CHANGE_ME
+          image: 000000000000.dkr.ecr.us-east-1.amazonaws.com/tech5/donation-service:latest
           imagePullPolicy: Always
           ports:
             - name: http

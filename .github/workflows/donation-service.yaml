@@ -1,0 +1,66 @@
+name: Donation Service CI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'app/donation-service/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'app/donation-service/**'
+  workflow_dispatch:
+
+jobs:
+  # 1. Pipeline de Segurança (Reutilizável - SAST com gosec & SCA com Trivy)
+  security-checks:
+    name: Reusable Security
+    uses: ./.github/workflows/security.yaml
+    with:
+      service_path: './app/donation-service'
+      language: 'go'
+
+  # 2. Pipeline de Build, Testes Unitários e Análise Estática
+  build:
+    name: Build and Check
+    runs-on: ubuntu-latest
+    needs: security-checks # Só faz o build se a segurança passar
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: SCA - Software Composition Analysis (govulncheck)
+        run: |
+          cd app/donation-service
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          govulncheck ./... || true
+
+      - name: Static Analysis (golangci-lint)
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.56.2
+          working-directory: app/donation-service
+          args: --timeout=5m
+
+      - name: Build & Unit Tests
+        run: |
+          cd app/donation-service
+          go test -v ./...
+          go build -v ./...
+
+      - name: Test Docker Build
+        # Constrói o container de forma isolada para garantir que o Dockerfile está funcional
+        run: docker build -t donation-service:test ./app/donation-service
+
+  # 3. Pipeline de Deploy (AWS ECR)
+  deploy:
+    needs: build
+    uses: ./.github/workflows/aws-deploy.yaml
+    with:
+      service_name: 'donation-service'
+    secrets: inherit
