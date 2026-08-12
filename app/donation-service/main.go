@@ -185,18 +185,18 @@ func main() {
 func (a *App) LivenessHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"status":"alive","service":"donation-service"}`))
+	_, _ = w.Write([]byte(`{"status":"alive","service":"donation-service"}`))
 }
 
 func (a *App) ReadinessHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	if a.DB == nil || a.DB.Ping() != nil {
 		w.WriteHeader(http.StatusServiceUnavailable)
-		w.Write([]byte(`{"status":"not_ready","database":"disconnected","service":"donation-service"}`))
+		_, _ = w.Write([]byte(`{"status":"not_ready","database":"disconnected","service":"donation-service"}`))
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"status":"ready","database":"connected","service":"donation-service"}`))
+	_, _ = w.Write([]byte(`{"status":"ready","database":"connected","service":"donation-service"}`))
 }
 
 func (a *App) HealthHandler(w http.ResponseWriter, r *http.Request) {
@@ -232,13 +232,13 @@ func (a *App) DonationHandler(w http.ResponseWriter, r *http.Request) {
 		var d Donation
 		if err := json.NewDecoder(r.Body).Decode(&d); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte(`{"error":"Payload JSON invalido"}`))
+			_, _ = w.Write([]byte(`{"error":"Payload JSON invalido"}`))
 			return
 		}
 
 		if err := d.Validate(); err != nil {
 			w.WriteHeader(http.StatusUnprocessableEntity)
-			json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+			_ = json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
 			return
 		}
 
@@ -252,7 +252,7 @@ func (a *App) DonationHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Printf("Erro ao salvar doacao no banco: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(`{"error":"Erro interno ao processar doacao"}`))
+			_, _ = w.Write([]byte(`{"error":"Erro interno ao processar doacao"}`))
 			return
 		}
 
@@ -266,7 +266,7 @@ func (a *App) DonationHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(d)
+		_ = json.NewEncoder(w).Encode(d)
 		return
 	}
 
@@ -275,7 +275,7 @@ func (a *App) DonationHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Printf("Erro ao consultar doacoes: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(`{"error":"Erro interno ao consultar doacoes"}`))
+			_, _ = w.Write([]byte(`{"error":"Erro interno ao consultar doacoes"}`))
 			return
 		}
 		defer rows.Close()
@@ -291,12 +291,12 @@ func (a *App) DonationHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(donations)
+		_ = json.NewEncoder(w).Encode(donations)
 		return
 	}
 
 	w.WriteHeader(http.StatusMethodNotAllowed)
-	w.Write([]byte(`{"error":"Metodo nao permitido"}`))
+	_, _ = w.Write([]byte(`{"error":"Metodo nao permitido"}`))
 }
 
 func (a *App) sendNotificationEvent(d Donation) {
