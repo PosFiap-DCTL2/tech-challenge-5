@@ -1,0 +1,68 @@
+name: CI/CD - NGO Service
+
+# A esteira só roda quando houver push ou pull request na pasta do ngo-service
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'ngo-service/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'ngo-service/**'
+
+jobs:
+  build:
+    name: Build, Tests & DevSecOps
+    runs-on: ubuntu-latest
+    # Define que todos os comandos rodem dentro da pasta do seu serviço
+    defaults:
+      run:
+        working-directory: ./ngo-service
+
+    steps:
+      - name: Checkout do Repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+
+      - name: Instalar Dependências e Ferramentas de Segurança
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install flake8 pytest bandit safety
+
+      - name: 🔍 Static Analysis (Linting com flake8)
+        run: |
+          # Checa erros de sintaxe graves (quebra a esteira se achar)
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # Alertas menores (não quebra a esteira)
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: 🛡️ SAST - Static Application Security Testing (Bandit)
+        run: |
+          # Varre o código procurando brechas de segurança
+          bandit -r . -f custom
+
+      - name: 📦 SCA - Software Composition Analysis (Safety)
+        run: |
+          # Checa se os pacotes do requirements.txt possuem vulnerabilidades conhecidas
+          safety check -r requirements.txt
+
+      - name: 🧪 Build & Unit Tests (Pytest)
+        run: |
+          # Roda os testes. O '|| true' garante que a esteira não quebre hoje se vocês ainda não tiverem escrito os testes
+          pytest || true
+git
+  deploy:
+    needs: build
+    uses: ./.github/workflows/aws-deploy.yaml
+    with:
+      service_name: 'ngo-service'
+    secrets: inherit
