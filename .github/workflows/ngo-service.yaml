@@ -59,7 +59,8 @@ jobs:
         run: |
           # Roda os testes. O '|| true' garante que a esteira não quebre hoje se vocês ainda não tiverem escrito os testes
           pytest || true
-git
+
+
   deploy:
     needs: build
     uses: ./.github/workflows/aws-deploy.yaml
