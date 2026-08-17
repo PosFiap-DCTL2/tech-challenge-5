@@ -13,7 +13,7 @@ provider "aws" {
 }
 
 module "Networking" {
-  source = "./Networking"
+  source                = "./Networking"
   eks_security_group_id = module.EKS_cluster.cluster_security_group_id
 }
 
@@ -44,12 +44,12 @@ module "SQS" {
 }
 
 module "RDS_donation_db" {
-  source = "./RDS/donation_db"
+  source  = "./RDS/donation_db"
   network = module.Networking.rds_config
 }
 
 module "RDS_ngo_db" {
-  source = "./RDS/ngo_db"
+  source  = "./RDS/ngo_db"
   network = module.Networking.rds_config
 }
 

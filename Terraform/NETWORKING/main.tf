@@ -1,18 +1,18 @@
 resource "aws_default_vpc" "hackathonvpc" {
   tags = {
-    Project= "SolidaryTech"
-    Environment= "Production"
-    CostCenter= "VPC-Core"
+    Project     = "SolidaryTech"
+    Environment = "Production"
+    CostCenter  = "VPC-Core"
   }
 }
 
 #### SUBNETS ####
 
 resource "aws_subnet" "subnetpublica01" {
-  vpc_id     = aws_default_vpc.hackathonvpc.id
-  cidr_block = "172.16.1.0/24"
+  vpc_id                  = aws_default_vpc.hackathonvpc.id
+  cidr_block              = "172.16.1.0/24"
   map_public_ip_on_launch = true
-  availability_zone = var.AZ[0]
+  availability_zone       = var.AZ[0]
 
   tags = {
     Name        = "SolidaryTech"
@@ -22,10 +22,10 @@ resource "aws_subnet" "subnetpublica01" {
 }
 
 resource "aws_subnet" "subnetpublica02" {
-  vpc_id     = aws_default_vpc.hackathonvpc.id
-  cidr_block = "172.16.2.0/24"
+  vpc_id                  = aws_default_vpc.hackathonvpc.id
+  cidr_block              = "172.16.2.0/24"
   map_public_ip_on_launch = true
-  availability_zone = var.AZ[1]
+  availability_zone       = var.AZ[1]
 
   tags = {
     Name        = "SolidaryTech"
@@ -35,10 +35,10 @@ resource "aws_subnet" "subnetpublica02" {
 }
 
 resource "aws_subnet" "subnetprivada01" {
-  vpc_id     = aws_default_vpc.hackathonvpc.id
-  cidr_block = "172.16.3.0/24"
+  vpc_id                  = aws_default_vpc.hackathonvpc.id
+  cidr_block              = "172.16.3.0/24"
   map_public_ip_on_launch = false
-  availability_zone = var.AZ[0]
+  availability_zone       = var.AZ[0]
 
   tags = {
     Name        = "SolidaryTech"
@@ -48,10 +48,10 @@ resource "aws_subnet" "subnetprivada01" {
 }
 
 resource "aws_subnet" "subnetprivada02" {
-  vpc_id     = aws_default_vpc.hackathonvpc.id
-  cidr_block = "172.16.4.0/24"
+  vpc_id                  = aws_default_vpc.hackathonvpc.id
+  cidr_block              = "172.16.4.0/24"
   map_public_ip_on_launch = false
-  availability_zone = var.AZ[1]
+  availability_zone       = var.AZ[1]
 
   tags = {
     Name        = "SolidaryTech"
@@ -82,7 +82,7 @@ resource "aws_eip" "nat" {
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat.id
   subnet_id     = aws_subnet.subnetpublica1.id
-  
+
 }
 
 ### Tabela de Roteamento Pública ###
@@ -174,11 +174,11 @@ resource "aws_security_group" "rds" {
   vpc_id      = aws_vpc.vpcpos.id
 
   ingress {
-    description     = "Postgres somente do EKS"
-    from_port       = 5432
-    to_port         = 5432
-    protocol        = "tcp"
-    
+    description = "Postgres somente do EKS"
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+
     security_groups = [var.eks_security_group_id]
   }
 

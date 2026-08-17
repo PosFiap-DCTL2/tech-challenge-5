@@ -7,8 +7,8 @@ resource "aws_sqs_queue" "sqspos" {
   sqs_managed_sse_enabled   = true
 
   tags = {
-    Project= "SolidaryTech"
-    Environment= "Production"
-    CostCenter= "Donation-Core"
+    Project     = "SolidaryTech"
+    Environment = "Production"
+    CostCenter  = "Donation-Core"
   }
 }
