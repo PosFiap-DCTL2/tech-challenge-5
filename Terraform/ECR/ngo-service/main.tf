@@ -5,4 +5,10 @@ resource "aws_ecr_repository" "ngo-service" {
   image_scanning_configuration {
     scan_on_push = false
   }
+
+  tags = {
+    Name        = "SolidaryTech"
+    Environment = "Production"
+    CostCenter  = "NGO-Core"
+  }
 }

@@ -5,4 +5,10 @@ resource "aws_ecr_repository" "donation-service" {
   image_scanning_configuration {
     scan_on_push = false
   }
+
+  tags = {
+    Name        = "SolidaryTech"
+    Environment = "Production"
+    CostCenter  = "Donation-Core"
+  }
 }

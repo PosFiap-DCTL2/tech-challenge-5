@@ -12,4 +12,10 @@ resource "aws_db_instance" "donation_db" {
   publicly_accessible    = true
   db_subnet_group_name   = var.network.subnet_group_id
   vpc_security_group_ids = [var.network.security_group_id]
+
+  tags = {
+    Name        = "SolidaryTech"
+    Environment = "Production"
+    CostCenter  = "Donation-Core"
+  }
 }

@@ -16,6 +16,12 @@ resource "aws_eks_cluster" "clusterpos" {
     endpoint_private_access = true   
     endpoint_public_access  = true 
   }
+
+  tags = {
+    Name        = "SolidaryTech"
+    Environment = "Production"
+    CostCenter  = "EKS-Cluster"
+  }
 }
 
 ### Access Entry para o Node Group ###
@@ -48,4 +54,10 @@ resource "aws_eks_node_group" "nodegrouppos" {
     aws_eks_cluster.clusterpos,
     aws_eks_access_entry.nodegrouppos   # <- node group só sobe após o access entry
   ]
+
+  tags = {
+    Name        = "SolidaryTech"
+    Environment = "Production"
+    CostCenter  = "EKS-NodeGroup"
+  }
 }

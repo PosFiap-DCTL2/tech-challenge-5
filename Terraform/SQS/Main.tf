@@ -5,4 +5,10 @@ resource "aws_sqs_queue" "sqspos" {
   message_retention_seconds = 86400
   receive_wait_time_seconds = 10
   sqs_managed_sse_enabled   = true
+
+  tags = {
+    Project= "SolidaryTech"
+    Environment= "Production"
+    CostCenter= "Donation-Core"
+  }
 }

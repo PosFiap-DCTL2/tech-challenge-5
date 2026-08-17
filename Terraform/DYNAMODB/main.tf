@@ -9,4 +9,10 @@ resource "aws_dynamodb_table" "SolidaryTechVolunteers" {
     name = "volunteer_id"
     type = "S"
   }
+
+  tags = {
+    Name        = "SolidaryTech"
+    Environment = "Production"
+    CostCenter  = "volunteer-Core"
+  }
 }
