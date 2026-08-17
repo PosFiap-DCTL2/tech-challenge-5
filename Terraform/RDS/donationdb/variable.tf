@@ -9,7 +9,7 @@ variable "user" {
   description = "Usuário do banco de dados"
   type        = string
   sensitive   = true
-  default     = "admin"
+  default     = "Postgresadmin"
 }
 
 variable "instanceclass" {

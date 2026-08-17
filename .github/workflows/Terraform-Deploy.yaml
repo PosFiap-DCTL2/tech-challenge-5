@@ -1,0 +1,170 @@
+name: Terraform deploy
+on:
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Adicionandos as credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Initialize Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Init
+        working-directory: ./Terraform
+        run: terraform init
+
+      - name: Terraform Validate
+        working-directory: ./Terraform
+        run: terraform validate
+
+      - name: Terraform Plan
+        working-directory: ./Terraform
+        run: terraform plan
+
+      - name: Terraform Apply
+        working-directory: ./Terraform
+        run: terraform apply -auto-approve
+
+  Instalando-os-addons:
+    runs-on: ubuntu-latest
+    needs: terraform
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Adicionandos as credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Adicionar cluster EKS ao kubeconfig
+        run: aws eks update-kubeconfig --name clusterpos --region us-east-1
+
+      - name: Instalar Metrics Server
+        run: kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+      - name: Instalar nginx ingress controller
+        run: kubectl apply --server-side -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/aws/deploy.yaml
+
+      - name: Instalar local-path-provisioner
+        run: |
+          kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.30/deploy/local-path-storage.yaml
+          kubectl -n local-path-storage rollout status deployment/local-path-provisioner
+          kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+          kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}' || true
+
+      - name: Criar PersistentVolumeClaims
+        working-directory: ./gitops
+        run: |  
+          kubectl create namespace loki
+          kubectl create namespace kube-prometheus-stack
+          kubectl apply -f ./pvc.yaml
+
+      - name: Adicionar Prometheus Stack ( Grafana + Prometheus + Alertmanager )
+        working-directory: ./gitops
+        run: |
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo update
+          helm install kube-prometheus-stack --create-namespace --namespace kube-prometheus-stack prometheus-community/kube-prometheus-stack -f ./prometheus/values-prometheus.yaml
+ 
+      - name: Adicionar Grafana Loki
+        working-directory: ./gitops
+        run: |
+          helm repo add grafana https://grafana.github.io/helm-charts
+          helm repo update
+          helm install loki grafana/loki \
+            --create-namespace \
+            --namespace loki \
+            -f ./loki/values-loki.yaml
+ 
+      - name: Adicionar Grafana Alloy
+        working-directory: ./gitops
+        run: |
+          helm repo add grafana https://grafana.github.io/helm-charts
+          helm repo update
+          kubectl create namespace alloy --dry-run=client -o yaml | kubectl apply -f -
+          kubectl create secret generic datadog-api-key -n alloy --from-literal=api-key=${{ secrets.DATADOG_API_KEY }}
+          helm upgrade --install alloy grafana/alloy \
+            --create-namespace \
+            --namespace alloy \
+            -f ./alloy/values-alloy.yaml
+ 
+      - name: Expor Grafana e Prometheus via LoadBalancer
+        run: |
+          kubectl patch svc kube-prometheus-stack-grafana -n kube-prometheus-stack -p '{"spec": {"type": "LoadBalancer"}}'
+          kubectl patch svc kube-prometheus-stack-prometheus -n kube-prometheus-stack -p '{"spec": {"type": "LoadBalancer"}}'
+
+      - name: Instalar ArgoCD 
+        run: |
+          kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
+          kubectl apply --server-side --force-conflicts -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+          kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+
+  Inserindo-os-dados-no-banco:
+    runs-on: ubuntu-latest
+    needs: [terraform, Instalando-os-addons]
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Adicionando as credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Adicionar cluster EKS ao kubeconfig
+        run: aws eks update-kubeconfig --name clusterpos --region us-east-1
+
+      - name: Criar secrets dos bancos no K8s
+        run: |
+          kubectl create secret generic db-credentials \
+            --from-literal=donation_db_password=${{ secrets.donation_db_password }} \
+            --from-literal=ngo_db_password=${{ secrets.ngo_db_password }} \
+            --from-literal=db_user=${{ secrets.db_user }} \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Coletar hosts dos RDS
+        run: |
+          DONATION_HOST=$(aws rds describe-db-instances \
+            --db-instance-identifier donationdb \
+            --query 'DBInstances[0].Endpoint.Address' --output text)
+          NGO_HOST=$(aws rds describe-db-instances \
+            --db-instance-identifier ngodb \
+            --query 'DBInstances[0].Endpoint.Address' --output text)
+
+          echo "DONATION_HOST=$DONATION_HOST" >> $GITHUB_ENV
+          echo "NGO_HOST=$NGO_HOST" >> $GITHUB_ENV
+
+      - name: Substituir variáveis de ambiente no Job YAML
+        run: |
+          sed -i "s|\$DONATION_HOST|${{ env.DONATION_HOST }}|g" ./Terraform/Initsql/job.yaml
+          sed -i "s|\$NGO_HOST|${{ env.NGO_HOST }}|g" ./Terraform/Initsql/job.yaml
+
+      - name: Criar ConfigMap com os SQLs
+        run: |
+          kubectl create configmap init-sql-scripts \
+            --from-file=donation.sql=./Terraform/Initsql/donationdb/init.sql \
+            --from-file=ngo.sql=./Terraform/Initsql/ngodb/init.sql \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Aplicar o Job de init
+        run: kubectl apply -f ./Terraform/Initsql/job.yaml
+
+      - name: Aguardar conclusão do Job
+        run: kubectl wait --for=condition=complete job/db-init-job --timeout=300s

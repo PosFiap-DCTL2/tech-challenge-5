@@ -1,6 +1,6 @@
-resource "aws_db_instance" "donation_db" {
+resource "aws_db_instance" "donationdb" {
   allocated_storage    = 10
-  db_name              = "donation_db"
+  db_name              = "donationdb"
   engine               = "postgres"
   engine_version       = "8.0"
   instance_class       = var.instanceclass

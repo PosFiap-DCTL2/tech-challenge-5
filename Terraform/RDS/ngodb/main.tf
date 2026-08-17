@@ -1,6 +1,6 @@
-resource "aws_db_instance" "ngo_db" {
+resource "aws_db_instance" "ngodb" {
   allocated_storage    = 10
-  db_name              = "ngo_db"
+  db_name              = "ngodb"
   engine               = "postgres"
   engine_version       = "8.0"
   instance_class       = var.instanceclass
