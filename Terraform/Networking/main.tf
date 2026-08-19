@@ -1,4 +1,7 @@
 resource "aws_vpc" "hackathonvpc" {
+  
+  cidr_block    = "172.16.0.0/16"
+
   tags = {
     Project     = "SolidaryTech"
     Environment = "Production"
