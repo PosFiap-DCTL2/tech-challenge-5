@@ -22,10 +22,14 @@ COPY . .
 # Variáveis de ambiente obrigatórias
 ENV PATH=/root/.local/bin:$PATH
 ENV PORT=8081
-ENV OTEL_SERVICE_NAME="ngo-service"
+
+# Variáveis de identificação do Datadog
+ENV DD_SERVICE="ngo-service"
+ENV DD_ENV="hackathon"
+ENV DD_VERSION="1.0.0"
 
 # Expõe a porta que o edital pediu
 EXPOSE 8081
 
-# O comando mágico: Inicia o OpenTelemetry vigiando o Gunicorn
-CMD ["opentelemetry-instrument", "gunicorn", "--bind", "0.0.0.0:8081", "--workers", "2", "--threads", "4", "app:app"]
+# O comando mágico: Inicia o Datadog vigiando o Gunicorn
+CMD ["ddtrace-run", "gunicorn", "--bind", "0.0.0.0:8081", "--workers", "2", "--threads", "4", "app:app"]
