@@ -1,5 +1,5 @@
 # Stage 1: Build binary
-FROM golang:1.21-alpine AS builder
+FROM golang:1.24-alpine AS builder
 
 WORKDIR /app
 
@@ -24,6 +24,11 @@ WORKDIR /app
 COPY --from=builder /app/donation-service .
 
 RUN chown -R appuser:appgroup /app
+
+# Variáveis de identificação do Datadog
+ENV DD_SERVICE="donation-service"
+ENV DD_ENV="hackathon"
+ENV DD_VERSION="1.0.0"
 
 USER appuser
 

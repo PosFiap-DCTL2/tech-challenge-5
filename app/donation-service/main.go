@@ -21,6 +21,9 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	sqltrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/database/sql"
+	httptrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/net/http"
+	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 )
 
 // Prometheus Metrics (Golden Metrics: Latency, Traffic, Errors)
@@ -97,6 +100,12 @@ type App struct {
 func main() {
 	_ = godotenv.Load()
 
+	// Inicia Datadog Tracer para APM Tracing
+	tracer.Start(
+		tracer.WithService("donation-service"),
+	)
+	defer tracer.Stop()
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8082"
@@ -107,7 +116,7 @@ func main() {
 		log.Fatal("DATABASE_URL e obrigatoria")
 	}
 
-	db, err := sql.Open("pgx", dbURL)
+	db, err := sqltrace.Open("pgx", dbURL, sqltrace.WithServiceName("donation-service"))
 	if err != nil {
 		log.Fatalf("Erro ao abrir conexao com banco de dados: %v", err)
 	}
@@ -138,7 +147,7 @@ func main() {
 
 	app := &App{DB: db, SqsSvc: sqsSvc, SqsQueueURL: queueURL}
 
-	mux := http.NewServeMux()
+	mux := httptrace.NewServeMux(httptrace.WithServiceName("donation-service"))
 	mux.HandleFunc("/health", app.HealthHandler)
 	mux.HandleFunc("/health/live", app.LivenessHandler)
 	mux.HandleFunc("/health/ready", app.ReadinessHandler)
