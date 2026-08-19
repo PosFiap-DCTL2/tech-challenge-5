@@ -44,12 +44,12 @@ module "SQS" {
 }
 
 module "RDS_donation_db" {
-  source  = "./RDS/donation_db"
+  source  = "./RDS/donationdb"
   network = module.Networking.rds_config
 }
 
 module "RDS_ngo_db" {
-  source  = "./RDS/ngo_db"
+  source  = "./RDS/ngodb"
   network = module.Networking.rds_config
 }
 

@@ -1,4 +1,7 @@
-resource "aws_default_vpc" "hackathonvpc" {
+resource "aws_vpc" "hackathonvpc" {
+  
+  cidr_block    = "172.16.0.0/16"
+
   tags = {
     Project     = "SolidaryTech"
     Environment = "Production"
@@ -8,37 +11,37 @@ resource "aws_default_vpc" "hackathonvpc" {
 
 #### SUBNETS ####
 
-resource "aws_subnet" "subnetpublica01" {
-  vpc_id                  = aws_default_vpc.hackathonvpc.id
+resource "aws_subnet" "subnetpublica1" {
+  vpc_id                  = aws_vpc.hackathonvpc.id
   cidr_block              = "172.16.1.0/24"
   map_public_ip_on_launch = true
-  availability_zone       = var.AZ[0]
+  availability_zone       = var.availability_zones[0]
 
   tags = {
     Name        = "SolidaryTech"
     Environment = "Production"
-    CostCenter  = "VPC-subnet-publica01"
+    CostCenter  = "VPC-subnet-publica1"
   }
 }
 
-resource "aws_subnet" "subnetpublica02" {
-  vpc_id                  = aws_default_vpc.hackathonvpc.id
+resource "aws_subnet" "subnetpublica2" {
+  vpc_id                  = aws_vpc.hackathonvpc.id
   cidr_block              = "172.16.2.0/24"
   map_public_ip_on_launch = true
-  availability_zone       = var.AZ[1]
+  availability_zone       = var.availability_zones[1]
 
   tags = {
     Name        = "SolidaryTech"
     Environment = "Production"
-    CostCenter  = "VPC-subnet-publica02"
+    CostCenter  = "VPC-subnet-publica2"
   }
 }
 
-resource "aws_subnet" "subnetprivada01" {
-  vpc_id                  = aws_default_vpc.hackathonvpc.id
+resource "aws_subnet" "subnetprivada1" {
+  vpc_id                  = aws_vpc.hackathonvpc.id
   cidr_block              = "172.16.3.0/24"
   map_public_ip_on_launch = false
-  availability_zone       = var.AZ[0]
+  availability_zone       = var.availability_zones[0]
 
   tags = {
     Name        = "SolidaryTech"
@@ -47,16 +50,16 @@ resource "aws_subnet" "subnetprivada01" {
   }
 }
 
-resource "aws_subnet" "subnetprivada02" {
-  vpc_id                  = aws_default_vpc.hackathonvpc.id
+resource "aws_subnet" "subnetprivada2" {
+  vpc_id                  = aws_vpc.hackathonvpc.id
   cidr_block              = "172.16.4.0/24"
   map_public_ip_on_launch = false
-  availability_zone       = var.AZ[1]
+  availability_zone       = var.availability_zones[1]
 
   tags = {
     Name        = "SolidaryTech"
     Environment = "Production"
-    CostCenter  = "VPC-subnet-privada02"
+    CostCenter  = "VPC-subnet-privada2"
   }
 }
 
@@ -88,7 +91,7 @@ resource "aws_nat_gateway" "nat" {
 ### Tabela de Roteamento Pública ###
 
 resource "aws_route_table" "publica" {
-  vpc_id = aws_vpc.vpcpos.id
+  vpc_id = aws_vpc.hackathonvpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -115,7 +118,7 @@ resource "aws_route_table_association" "tabeladerotapublica2" {
 ### Tabela de Roteamento Privada ###
 
 resource "aws_route_table" "privada" {
-  vpc_id = aws_vpc.vpcpos.id
+  vpc_id = aws_vpc.hackathonvpc.id
 
   route {
     cidr_block     = "0.0.0.0/0"
@@ -143,7 +146,7 @@ resource "aws_route_table_association" "tabeladerotaprivada2" {
 ### Gateway de internet ###
 
 resource "aws_internet_gateway" "gw" {
-  vpc_id = aws_vpc.vpcpos.id
+  vpc_id = aws_vpc.hackathonvpc.id
 
   tags = {
     Name        = "SolidaryTech"
@@ -157,7 +160,7 @@ resource "aws_internet_gateway" "gw" {
 resource "aws_security_group" "eks" {
   name        = "eks-security-group"
   description = "Security Group do EKS"
-  vpc_id      = aws_vpc.vpcpos.id
+  vpc_id      = aws_vpc.hackathonvpc.id
 
   egress {
     description = "EKS pode sair para qualquer destino"
@@ -171,7 +174,7 @@ resource "aws_security_group" "eks" {
 resource "aws_security_group" "rds" {
   name        = "rds-security-group"
   description = "Security Group do RDS"
-  vpc_id      = aws_vpc.vpcpos.id
+  vpc_id      = aws_vpc.hackathonvpc.id
 
   ingress {
     description = "Postgres somente do EKS"

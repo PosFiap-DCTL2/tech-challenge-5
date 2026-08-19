@@ -6,7 +6,7 @@ output "private_subnet_ids" {
 }
 
 output "vpc_id" {
-  value = aws_vpc.vpcpos.id
+  value = aws_vpc.hackathonvpc.id
 }
 
 output "rds_config" {
