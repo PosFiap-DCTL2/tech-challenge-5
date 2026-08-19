@@ -2,11 +2,11 @@ resource "aws_db_instance" "donationdb" {
   allocated_storage    = 10
   db_name              = "donationdb"
   engine               = "postgres"
-  engine_version       = "14.9"
+  engine_version       = "15.18"
   instance_class       = var.instanceclass
   username             = var.user
   password             = var.password
-  parameter_group_name = "default.postgres8.0"
+  parameter_group_name   = "default.postgres15"
   skip_final_snapshot  = true
 
   publicly_accessible    = true
