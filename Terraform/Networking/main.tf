@@ -1,4 +1,4 @@
-resource "aws_default_vpc" "hackathonvpc" {
+resource "aws_vpc" "hackathonvpc" {
   tags = {
     Project     = "SolidaryTech"
     Environment = "Production"
@@ -8,7 +8,7 @@ resource "aws_default_vpc" "hackathonvpc" {
 
 #### SUBNETS ####
 
-resource "aws_subnet" "subnetpublica01" {
+resource "aws_subnet" "subnetpublica1" {
   vpc_id                  = aws_default_vpc.hackathonvpc.id
   cidr_block              = "172.16.1.0/24"
   map_public_ip_on_launch = true
@@ -88,7 +88,7 @@ resource "aws_nat_gateway" "nat" {
 ### Tabela de Roteamento Pública ###
 
 resource "aws_route_table" "publica" {
-  vpc_id = aws_vpc.vpcpos.id
+  vpc_id = aws_vpc.hackathonvpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -115,7 +115,7 @@ resource "aws_route_table_association" "tabeladerotapublica2" {
 ### Tabela de Roteamento Privada ###
 
 resource "aws_route_table" "privada" {
-  vpc_id = aws_vpc.vpcpos.id
+  vpc_id = aws_vpc.hackathonvpc.id
 
   route {
     cidr_block     = "0.0.0.0/0"
@@ -157,7 +157,7 @@ resource "aws_internet_gateway" "gw" {
 resource "aws_security_group" "eks" {
   name        = "eks-security-group"
   description = "Security Group do EKS"
-  vpc_id      = aws_vpc.vpcpos.id
+  vpc_id      = aws_vpc.hackathonvpc.id
 
   egress {
     description = "EKS pode sair para qualquer destino"
@@ -171,7 +171,7 @@ resource "aws_security_group" "eks" {
 resource "aws_security_group" "rds" {
   name        = "rds-security-group"
   description = "Security Group do RDS"
-  vpc_id      = aws_vpc.vpcpos.id
+  vpc_id      = aws_vpc.hackathonvpc.id
 
   ingress {
     description = "Postgres somente do EKS"
