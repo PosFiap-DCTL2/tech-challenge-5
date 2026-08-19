@@ -2,7 +2,7 @@ resource "aws_db_instance" "donationdb" {
   allocated_storage    = 10
   db_name              = "donationdb"
   engine               = "postgres"
-  engine_version       = "15.4"
+  engine_version       = "14.9"
   instance_class       = var.instanceclass
   username             = var.user
   password             = var.password
