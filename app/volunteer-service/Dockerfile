@@ -21,6 +21,10 @@ RUN groupadd --gid 1001 appgroup && \
     useradd --uid 1001 --gid appgroup --no-create-home --shell /sbin/nologin appuser
 USER appuser
 
+ENV DD_SERVICE="volunteer-service"
+ENV DD_ENV="hackathon"
+ENV DD_VERSION="1.0.0"  
+
 EXPOSE 8083
 
-CMD ["python", "app.py"]
+CMD ["ddtrace-run", "python", "app.py"]
