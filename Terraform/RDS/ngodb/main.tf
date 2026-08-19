@@ -1,6 +1,7 @@
 resource "aws_db_instance" "ngodb" {
   allocated_storage    = 10
   db_name              = "ngodb"
+  identifier           = "ngodb"
   engine               = "postgres"
   engine_version       = "15.18"
   instance_class       = var.instanceclass
