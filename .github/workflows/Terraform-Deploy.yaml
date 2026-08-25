@@ -75,6 +75,13 @@ jobs:
           kubectl create namespace kube-prometheus-stack
           kubectl apply -f ./pvc.yaml
 
+      - name: Instalar cluster-autoscaler
+        run: |
+          helm repo add autoscaler https://kubernetes.github.io/autoscaler
+          helm repo update
+
+          helm install cluster-autoscaler autoscaler/cluster-autoscaler --namespace kube-system --set autoDiscovery.clusterName=clusterpos  --set awsRegion=us-east-1 --set rbac.serviceAccount.create=true
+
       - name: Adicionar Prometheus Stack ( Grafana + Prometheus + Alertmanager )
         working-directory: ./gitops
         run: |
