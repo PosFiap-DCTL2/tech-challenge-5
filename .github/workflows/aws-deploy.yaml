@@ -28,7 +28,7 @@ jobs:
 
       # 3. Faz o build e push do serviço que foi passado como parâmetro
       - name: Build and Push to ECR
-
+        id: build-push
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: tech5/${{ inputs.service_name }}
@@ -42,9 +42,26 @@ jobs:
           cd app/${{ inputs.service_name }}
 
           # Build e Tag
-          docker build -t $REGISTRY/$REPOSITORY:${{ github.sha }} .
-          docker tag $REGISTRY/$REPOSITORY:${{ github.sha }} $REGISTRY/$REPOSITORY:latest
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $REGISTRY/$REPOSITORY:latest
 
           # Push
-          docker push $REGISTRY/$REPOSITORY:${{ github.sha }}
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:latest
+
+      - name: Update GitOps Repo
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: tech5/${{ inputs.service_name }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          git clone https://${{ secrets.GITOPS_PAT }}@github.com/PosFiap-DCTL2/tech-challenge-5
+          cd tech-challenge-5/Kubernetes/${{ inputs.service_name }}
+
+          sed -i "s|^\(\s*image:\s*\).*${{ inputs.service_name }}:.*|\1$REGISTRY/$REPOSITORY:$IMAGE_TAG|" deployment.yaml
+
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          git add deployment.yaml
+          git commit -m "feat(${{ inputs.service_name }}): Update da imagem para $IMAGE_TAG"
+          git push
