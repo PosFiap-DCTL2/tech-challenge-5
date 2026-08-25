@@ -8,3 +8,4 @@ metadata:
 data:
   PORT: "8081"
   OTEL_SERVICE_NAME: "ngo-service"
+  DATABASE_URL: "postgres://Postgresadmin:SenhaForte123!@ngodb.ca8z93ilhwfx.us-east-1.rds.amazonaws.com:5432/ngo_db"
