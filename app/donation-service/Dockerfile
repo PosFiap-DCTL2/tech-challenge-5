@@ -17,7 +17,7 @@ FROM alpine:3.19
 
 RUN apk --no-cache add ca-certificates tzdata
 
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+RUN addgroup -S -g 1001 appgroup && adduser -S -u 1001 -G appgroup appuser
 
 WORKDIR /app
 
@@ -30,7 +30,7 @@ ENV DD_SERVICE="donation-service"
 ENV DD_ENV="hackathon"
 ENV DD_VERSION="1.0.0"
 
-USER appuser
+USER 1001
 
 EXPOSE 8082
 

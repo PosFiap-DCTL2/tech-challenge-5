@@ -15,6 +15,7 @@ FROM python:3.9-slim
 WORKDIR /app
 
 COPY --from=builder /usr/local/lib/python3.9/site-packages /usr/local/lib/python3.9/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
 COPY app.py .
 
 RUN groupadd --gid 1001 appgroup && \
@@ -23,7 +24,7 @@ USER appuser
 
 ENV DD_SERVICE="volunteer-service"
 ENV DD_ENV="hackathon"
-ENV DD_VERSION="1.0.0"  
+ENV DD_VERSION="1.0.0"
 
 EXPOSE 8083
 
