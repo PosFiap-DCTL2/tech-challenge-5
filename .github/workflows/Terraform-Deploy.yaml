@@ -162,8 +162,8 @@ jobs:
       - name: Criar ConfigMap com os SQLs
         run: |
           kubectl create configmap init-sql-scripts \
-            --from-file=donation.sql=./Terraform/Initsql/donationdb/init.sql \
-            --from-file=ngo.sql=./Terraform/Initsql/ngodb/init.sql \
+            --from-file=donation.sql=./Terraform/Initsql/donation_db/init.sql \
+            --from-file=ngo.sql=./Terraform/Initsql/ngo_db/init.sql \
             --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Aplicar o Job de init

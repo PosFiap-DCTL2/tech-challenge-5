@@ -6,4 +6,4 @@ metadata:
   labels:
     app: donation-service
 data:
-  AWS_SQS_URL: "https://sqs.us-east-1.amazonaws.com/000000000000/CHANGE_ME"
+  AWS_SQS_URL: "https://sqs.us-east-1.amazonaws.com/956092955950/solidary-donations"
