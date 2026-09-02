@@ -30,33 +30,37 @@ import (
 var (
 	httpRequestsTotal = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "http_requests_total",
-			Help: "Total de requisições HTTP processadas por handler e status code",
+			Name:        "http_requests_total",
+			Help:        "Total de requisições HTTP processadas por handler e status code",
+			ConstLabels: prometheus.Labels{"service": "donation-service"},
 		},
 		[]string{"method", "handler", "code"},
 	)
 
 	httpRequestDuration = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
-			Name:    "http_request_duration_seconds",
-			Help:    "Histograma de latência das requisições HTTP em segundos",
-			Buckets: prometheus.DefBuckets,
+			Name:        "http_request_duration_seconds",
+			Help:        "Histograma de latência das requisições HTTP em segundos",
+			Buckets:     prometheus.DefBuckets,
+			ConstLabels: prometheus.Labels{"service": "donation-service"},
 		},
 		[]string{"method", "handler"},
 	)
 
 	donationsTotal = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "donations_created_total",
-			Help: "Total de doações processadas com sucesso por status",
+			Name:        "donations_created_total",
+			Help:        "Total de doações processadas com sucesso por status",
+			ConstLabels: prometheus.Labels{"service": "donation-service"},
 		},
 		[]string{"status"},
 	)
 
 	donationAmountTotal = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "donation_amount_total",
-			Help: "Valor acumulado de doações por ONG",
+			Name:        "donation_amount_total",
+			Help:        "Valor acumulado de doações por ONG",
+			ConstLabels: prometheus.Labels{"service": "donation-service"},
 		},
 		[]string{"ngo_id"},
 	)
