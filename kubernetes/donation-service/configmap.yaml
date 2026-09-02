@@ -7,4 +7,4 @@ metadata:
     app: donation-service
 data:
   AWS_SQS_URL: "https://sqs.us-east-1.amazonaws.com/956092955950/solidary-donations"
-  DATABASE_URL: "postgres://Postgresadmin:SenhaForte123!@donationdb.ca8z93ilhwfx.us-east-1.rds.amazonaws.com:5432/donationdb"
+  DATABASE_URL: "postgres://Postgresadmin:2@donationdb.ca8z93ilhwfx.us-east-1.rds.amazonaws.com:5432/donationdb"
