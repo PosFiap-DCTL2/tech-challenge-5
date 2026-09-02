@@ -15,9 +15,10 @@ spec:
           args:
             - |
               echo ">>> donationdb" && \
-              PGPASSWORD=\$DONATION_PASS psql -h \$DONATION_HOST -p 5432 -U \$DB_USER -d donationdb -f /scripts/donationdb.sql && \
+              PGPASSWORD=$DONATION_PASS psql -h $DONATION_HOST -p 5432 -U $DB_USER -d donationdb -f /scripts/donationdb.sql && \
               echo ">>> ngodb" && \
-              PGPASSWORD=\$NGO_PASS psql -h \$NGO_HOST -p 5432 -U \$DB_USER -d ngodb -f /scripts/ngodb.sql && \
+              PGPASSWORD=$NGO_PASS psql -h $NGO_HOST -p 5432 -U $DB_USER -d ngodb -f /scripts/ngodb.sql
+          env:
             - name: DONATION_HOST
               value: "$DONATION_HOST"
             - name: NGO_HOST
