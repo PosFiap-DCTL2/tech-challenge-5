@@ -14,6 +14,9 @@ spec:
     metadata:
       labels:
         app: donation-service
+    annotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/path: "/metrics"  
     spec:
       containers:
         - name: donation-service
