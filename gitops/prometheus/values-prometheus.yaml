@@ -1452,7 +1452,7 @@ prometheus:
     podMonitorSelectorNilUsesHelmValues: false
     additionalArgs:
     - name: web.enable-remote-write-receiver
-    retention: 15d
+    retention: 30d
     storageSpec:
       volumeClaimTemplate:
         spec:
