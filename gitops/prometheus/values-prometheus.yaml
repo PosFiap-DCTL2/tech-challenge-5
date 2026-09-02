@@ -81,8 +81,8 @@ grafana:
           execErrState: Error
           for: 1m
           annotations:
-            description: O namespace {{ $labels.namespace }} está consumindo {{ printf "%.2f" $values.A.Value }}% da CPU configurada como limite.
-            summary: Alto consumo de CPU no namespace {{ $labels.namespace }}
+            description: 'O namespace {{ "{{" }} $labels.namespace {{ "}}" }} está consumindo {{ "{{" }} printf "%.2f" $values.A.Value {{ "}}" }}% da CPU configurada como limite.'
+            summary: 'Alto consumo de CPU no namespace {{ "{{" }} $labels.namespace {{ "}}" }}'
           isPaused: false
           notification_settings:
             receiver: Discord
@@ -134,8 +134,8 @@ grafana:
           execErrState: Error
           for: 1m
           annotations:
-            description: O namespace {{ $labels.namespace }} está consumindo {{ printf "%.2f" $values.A.Value }}% da memória disponível.
-            summary: Memória alta no namespace {{ $labels.namespace }}
+            description: 'O namespace {{ "{{" }} $labels.namespace {{ "}}" }} está consumindo {{ "{{" }} printf "%.2f" $values.A.Value {{ "}}" }}% da memória disponível.'
+            summary: 'Memória alta no namespace {{ "{{" }} $labels.namespace {{ "}}" }}'
           isPaused: false
           notification_settings:
             receiver: Discord
@@ -187,8 +187,8 @@ grafana:
           execErrState: Error
           for: 1m
           annotations:
-            description: Foram detectadas {{ printf "%.0f" $values.A.Value }} reinicializações nos últimos 15 minutos no namespace {{ $labels.namespace }}.
-            summary: Containers reiniciando no namespace {{ $labels.namespace }}
+            description: 'Foram detectadas {{ "{{" }} printf "%.0f" $values.A.Value {{ "}}" }} reinicializações nos últimos 15 minutos no namespace {{ "{{" }} $labels.namespace {{ "}}" }}.'
+            summary: 'Containers reiniciando no namespace {{ "{{" }} $labels.namespace {{ "}}" }}'
           isPaused: false
           notification_settings:
             receiver: Discord
