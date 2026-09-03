@@ -1430,6 +1430,809 @@ grafana:
               }
             }
           }
+      SRE-Disponibilidade:
+        json: |-
+          {
+            "apiVersion": "dashboard.grafana.app/v2",
+            "kind": "Dashboard",
+            "metadata": {
+              "name": "donation-availability-sli",
+              "namespace": "default",
+              "uid": "b1cf1852-35aa-49f7-af2f-38229a95569d",
+              "resourceVersion": "1788396249335982",
+              "generation": 1,
+              "creationTimestamp": "2026-09-03T00:44:09Z",
+              "labels": {
+                "grafana.app/deprecatedInternalID": "1138025888174080"
+              },
+              "annotations": {
+                "grafana.app/createdBy": "user:bfx359a5971fkd",
+                "grafana.app/saved-from-ui": "Grafana v13.2.0 (f681b1359f)"
+              }
+            },
+            "spec": {
+              "annotations": [
+                {
+                  "kind": "AnnotationQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "grafana",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "-- Grafana --"
+                      },
+                      "spec": {}
+                    },
+                    "enable": true,
+                    "hide": true,
+                    "iconColor": "rgba(0, 211, 255, 1)",
+                    "name": "Annotations & Alerts",
+                    "builtIn": true
+                  }
+                }
+              ],
+              "cursorSync": "Crosshair",
+              "editable": true,
+              "elements": {
+                "panel-1": {
+                  "kind": "Panel",
+                  "spec": {
+                    "id": 1,
+                    "title": "SLI - Disponibilidade (5m)",
+                    "description": "SLI de disponibilidade do donation-service: percentual de requisições ao handler donations que não retornaram HTTP 5xx nos últimos 5 minutos. SLO definido: >= 99,5%.",
+                    "links": [],
+                    "data": {
+                      "kind": "QueryGroup",
+                      "spec": {
+                        "queries": [
+                          {
+                            "kind": "PanelQuery",
+                            "spec": {
+                              "query": {
+                                "kind": "DataQuery",
+                                "group": "prometheus",
+                                "version": "v0",
+                                "datasource": {
+                                  "name": "prometheus"
+                                },
+                                "spec": {
+                                  "editorMode": "code",
+                                  "expr": "sum(increase(http_requests_total{handler=\"donations\",code!~\"5..\"}[5m]))/sum(increase(http_requests_total{handler=\"donations\"}[5m])) * 100",
+                                  "instant": true,
+                                  "legendFormat": "Disponibilidade",
+                                  "range": false
+                                }
+                              },
+                              "refId": "A",
+                              "hidden": false
+                            }
+                          }
+                        ],
+                        "transformations": [],
+                        "queryOptions": {}
+                      }
+                    },
+                    "vizConfig": {
+                      "kind": "VizConfig",
+                      "group": "stat",
+                      "version": "13.2.0",
+                      "spec": {
+                        "options": {
+                          "colorMode": "value",
+                          "graphMode": "area",
+                          "justifyMode": "center",
+                          "orientation": "auto",
+                          "percentChangeColorMode": "standard",
+                          "reduceOptions": {
+                            "calcs": [
+                              "lastNotNull"
+                            ],
+                            "fields": "",
+                            "values": false
+                          },
+                          "showPercentChange": false,
+                          "textMode": "valueAndName",
+                          "wideLayout": true
+                        },
+                        "fieldConfig": {
+                          "defaults": {
+                            "unit": "percent",
+                            "decimals": 2,
+                            "min": 0,
+                            "max": 100,
+                            "thresholds": {
+                              "mode": "absolute",
+                              "steps": [
+                                {
+                                  "value": 0,
+                                  "color": "red"
+                                },
+                                {
+                                  "value": 99.5,
+                                  "color": "green"
+                                }
+                              ]
+                            },
+                            "color": {
+                              "mode": "thresholds"
+                            }
+                          },
+                          "overrides": []
+                        }
+                      }
+                    }
+                  }
+                },
+                "panel-2": {
+                  "kind": "Panel",
+                  "spec": {
+                    "id": 2,
+                    "title": "SLO - Disponibilidade",
+                    "description": "Meta oficial definida pelo grupo para o SLI de disponibilidade.",
+                    "links": [],
+                    "data": {
+                      "kind": "QueryGroup",
+                      "spec": {
+                        "queries": [
+                          {
+                            "kind": "PanelQuery",
+                            "spec": {
+                              "query": {
+                                "kind": "DataQuery",
+                                "group": "prometheus",
+                                "version": "v0",
+                                "datasource": {
+                                  "name": "prometheus"
+                                },
+                                "spec": {
+                                  "editorMode": "code",
+                                  "expr": "vector(99.5)",
+                                  "instant": true,
+                                  "legendFormat": "SLO",
+                                  "range": false
+                                }
+                              },
+                              "refId": "A",
+                              "hidden": false
+                            }
+                          }
+                        ],
+                        "transformations": [],
+                        "queryOptions": {}
+                      }
+                    },
+                    "vizConfig": {
+                      "kind": "VizConfig",
+                      "group": "stat",
+                      "version": "13.2.0",
+                      "spec": {
+                        "options": {
+                          "colorMode": "value",
+                          "graphMode": "none",
+                          "justifyMode": "center",
+                          "orientation": "auto",
+                          "percentChangeColorMode": "standard",
+                          "reduceOptions": {
+                            "calcs": [
+                              "lastNotNull"
+                            ],
+                            "fields": "",
+                            "values": false
+                          },
+                          "showPercentChange": false,
+                          "textMode": "valueAndName",
+                          "wideLayout": true
+                        },
+                        "fieldConfig": {
+                          "defaults": {
+                            "unit": "percent",
+                            "decimals": 2,
+                            "min": 0,
+                            "max": 100,
+                            "thresholds": {
+                              "mode": "absolute",
+                              "steps": [
+                                {
+                                  "value": 0,
+                                  "color": "green"
+                                }
+                              ]
+                            },
+                            "color": {
+                              "mode": "thresholds"
+                            }
+                          },
+                          "overrides": []
+                        }
+                      }
+                    }
+                  }
+                },
+                "panel-3": {
+                  "kind": "Panel",
+                  "spec": {
+                    "id": 3,
+                    "title": "Taxa de Erros 5xx (5m)",
+                    "description": "Taxa de respostas HTTP 5xx do donation-service nos últimos 5 minutos.",
+                    "links": [],
+                    "data": {
+                      "kind": "QueryGroup",
+                      "spec": {
+                        "queries": [
+                          {
+                            "kind": "PanelQuery",
+                            "spec": {
+                              "query": {
+                                "kind": "DataQuery",
+                                "group": "prometheus",
+                                "version": "v0",
+                                "datasource": {
+                                  "name": "prometheus"
+                                },
+                                "spec": {
+                                  "editorMode": "code",
+                                  "expr": "(sum(rate(http_requests_total{handler=\"donations\",code=~\"5..\"}[5m]))/sum(rate(http_requests_total{handler=\"donations\"}[5m]))* 100) or vector(0)",
+                                  "instant": true,
+                                  "legendFormat": "Erros 5xx",
+                                  "range": false
+                                }
+                              },
+                              "refId": "A",
+                              "hidden": false
+                            }
+                          }
+                        ],
+                        "transformations": [],
+                        "queryOptions": {}
+                      }
+                    },
+                    "vizConfig": {
+                      "kind": "VizConfig",
+                      "group": "stat",
+                      "version": "13.2.0",
+                      "spec": {
+                        "options": {
+                          "colorMode": "value",
+                          "graphMode": "area",
+                          "justifyMode": "center",
+                          "orientation": "auto",
+                          "percentChangeColorMode": "standard",
+                          "reduceOptions": {
+                            "calcs": [
+                              "lastNotNull"
+                            ],
+                            "fields": "",
+                            "values": false
+                          },
+                          "showPercentChange": false,
+                          "textMode": "valueAndName",
+                          "wideLayout": true
+                        },
+                        "fieldConfig": {
+                          "defaults": {
+                            "unit": "percent",
+                            "decimals": 2,
+                            "min": 0,
+                            "max": 100,
+                            "thresholds": {
+                              "mode": "absolute",
+                              "steps": [
+                                {
+                                  "value": 0,
+                                  "color": "green"
+                                },
+                                {
+                                  "value": 0.5,
+                                  "color": "red"
+                                }
+                              ]
+                            },
+                            "color": {
+                              "mode": "thresholds"
+                            }
+                          },
+                          "overrides": []
+                        }
+                      }
+                    }
+                  }
+                },
+                "panel-4": {
+                  "kind": "Panel",
+                  "spec": {
+                    "id": 4,
+                    "title": "Disponibilidade x SLO",
+                    "description": "Histórico do SLI calculado em janelas móveis de 5 minutos. A linha de 99,5% representa o SLO.",
+                    "links": [],
+                    "data": {
+                      "kind": "QueryGroup",
+                      "spec": {
+                        "queries": [
+                          {
+                            "kind": "PanelQuery",
+                            "spec": {
+                              "query": {
+                                "kind": "DataQuery",
+                                "group": "prometheus",
+                                "version": "v0",
+                                "datasource": {
+                                  "name": "prometheus"
+                                },
+                                "spec": {
+                                  "editorMode": "code",
+                                  "expr": "100 * sum(rate(http_requests_total{service=\"donation-service\",handler=\"donations\",code!~\"5..\"}[5m])) / sum(rate(http_requests_total{service=\"donation-service\",handler=\"donations\"}[5m]))",
+                                  "instant": false,
+                                  "legendFormat": "Disponibilidade",
+                                  "range": true
+                                }
+                              },
+                              "refId": "A",
+                              "hidden": false
+                            }
+                          },
+                          {
+                            "kind": "PanelQuery",
+                            "spec": {
+                              "query": {
+                                "kind": "DataQuery",
+                                "group": "prometheus",
+                                "version": "v0",
+                                "datasource": {
+                                  "name": "prometheus"
+                                },
+                                "spec": {
+                                  "editorMode": "code",
+                                  "expr": "vector(99.5)",
+                                  "instant": false,
+                                  "legendFormat": "SLO 99,5%",
+                                  "range": true
+                                }
+                              },
+                              "refId": "B",
+                              "hidden": false
+                            }
+                          }
+                        ],
+                        "transformations": [],
+                        "queryOptions": {}
+                      }
+                    },
+                    "vizConfig": {
+                      "kind": "VizConfig",
+                      "group": "timeseries",
+                      "version": "13.2.0",
+                      "spec": {
+                        "options": {
+                          "legend": {
+                            "calcs": [
+                              "lastNotNull",
+                              "min",
+                              "mean"
+                            ],
+                            "displayMode": "table",
+                            "placement": "bottom",
+                            "showLegend": true
+                          },
+                          "tooltip": {
+                            "hideZeros": false,
+                            "mode": "multi",
+                            "sort": "desc"
+                          }
+                        },
+                        "fieldConfig": {
+                          "defaults": {
+                            "unit": "percent",
+                            "decimals": 2,
+                            "min": 0,
+                            "max": 100,
+                            "thresholds": {
+                              "mode": "absolute",
+                              "steps": [
+                                {
+                                  "value": 0,
+                                  "color": "red"
+                                },
+                                {
+                                  "value": 99.5,
+                                  "color": "green"
+                                }
+                              ]
+                            },
+                            "color": {
+                              "mode": "palette-classic"
+                            },
+                            "custom": {
+                              "axisBorderShow": false,
+                              "axisCenteredZero": false,
+                              "axisColorMode": "text",
+                              "axisLabel": "Disponibilidade (%)",
+                              "axisPlacement": "auto",
+                              "barAlignment": 0,
+                              "barWidthFactor": 0.6,
+                              "drawStyle": "line",
+                              "fillOpacity": 10,
+                              "gradientMode": "none",
+                              "hideFrom": {
+                                "legend": false,
+                                "tooltip": false,
+                                "viz": false
+                              },
+                              "insertNulls": false,
+                              "lineInterpolation": "linear",
+                              "lineWidth": 2,
+                              "pointSize": 5,
+                              "scaleDistribution": {
+                                "type": "linear"
+                              },
+                              "showPoints": "never",
+                              "showValues": false,
+                              "spanNulls": false,
+                              "stacking": {
+                                "group": "A",
+                                "mode": "none"
+                              },
+                              "thresholdsStyle": {
+                                "mode": "line"
+                              }
+                            }
+                          },
+                          "overrides": [
+                            {
+                              "__systemRef": "hideSeriesFrom",
+                              "matcher": {
+                                "id": "byNames",
+                                "options": {
+                                  "mode": "exclude",
+                                  "names": [
+                                    "SLO 99,5%"
+                                  ],
+                                  "prefix": "All except:",
+                                  "readOnly": true
+                                }
+                              },
+                              "properties": [
+                                {
+                                  "id": "custom.hideFrom",
+                                  "value": {
+                                    "legend": false,
+                                    "tooltip": true,
+                                    "viz": true
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                },
+                "panel-5": {
+                  "kind": "Panel",
+                  "spec": {
+                    "id": 5,
+                    "title": "Requisições por Status HTTP",
+                    "description": "Quantidade de requisições processadas por código HTTP. Útil para validar visualmente quais respostas estão afetando o SLI.",
+                    "links": [],
+                    "data": {
+                      "kind": "QueryGroup",
+                      "spec": {
+                        "queries": [
+                          {
+                            "kind": "PanelQuery",
+                            "spec": {
+                              "query": {
+                                "kind": "DataQuery",
+                                "group": "prometheus",
+                                "version": "v0",
+                                "datasource": {
+                                  "name": "prometheus"
+                                },
+                                "spec": {
+                                  "editorMode": "code",
+                                  "expr": "sum by (code) (rate(http_requests_total{service=\"donation-service\",handler=\"donations\"}[5m]))",
+                                  "instant": false,
+                                  "legendFormat": "HTTP {{code}}",
+                                  "range": true
+                                }
+                              },
+                              "refId": "A",
+                              "hidden": false
+                            }
+                          }
+                        ],
+                        "transformations": [],
+                        "queryOptions": {}
+                      }
+                    },
+                    "vizConfig": {
+                      "kind": "VizConfig",
+                      "group": "timeseries",
+                      "version": "13.2.0",
+                      "spec": {
+                        "options": {
+                          "legend": {
+                            "calcs": [],
+                            "displayMode": "list",
+                            "placement": "bottom",
+                            "showLegend": true
+                          },
+                          "tooltip": {
+                            "hideZeros": false,
+                            "mode": "multi",
+                            "sort": "desc"
+                          }
+                        },
+                        "fieldConfig": {
+                          "defaults": {
+                            "unit": "reqps",
+                            "thresholds": {
+                              "mode": "absolute",
+                              "steps": [
+                                {
+                                  "value": 0,
+                                  "color": "green"
+                                }
+                              ]
+                            },
+                            "color": {
+                              "mode": "palette-classic"
+                            },
+                            "custom": {
+                              "axisBorderShow": false,
+                              "axisCenteredZero": false,
+                              "axisColorMode": "text",
+                              "axisLabel": "req/s",
+                              "axisPlacement": "auto",
+                              "barAlignment": 0,
+                              "barWidthFactor": 0.6,
+                              "drawStyle": "line",
+                              "fillOpacity": 10,
+                              "gradientMode": "none",
+                              "hideFrom": {
+                                "legend": false,
+                                "tooltip": false,
+                                "viz": false
+                              },
+                              "insertNulls": false,
+                              "lineInterpolation": "linear",
+                              "lineWidth": 1,
+                              "pointSize": 5,
+                              "scaleDistribution": {
+                                "type": "linear"
+                              },
+                              "showPoints": "never",
+                              "showValues": false,
+                              "spanNulls": false,
+                              "stacking": {
+                                "group": "A",
+                                "mode": "none"
+                              },
+                              "thresholdsStyle": {
+                                "mode": "off"
+                              }
+                            }
+                          },
+                          "overrides": []
+                        }
+                      }
+                    }
+                  }
+                },
+                "panel-6": {
+                  "kind": "Panel",
+                  "spec": {
+                    "id": 6,
+                    "title": "Error Budget Consumido (5m)",
+                    "description": "Percentual do Error Budget de disponibilidade consumido na janela de 5 minutos. Com SLO de 99,5%, o orçamento de erro é 0,5%. 100% significa que todo o orçamento foi consumido; acima de 100% indica violação do SLO.",
+                    "links": [],
+                    "data": {
+                      "kind": "QueryGroup",
+                      "spec": {
+                        "queries": [
+                          {
+                            "kind": "PanelQuery",
+                            "spec": {
+                              "query": {
+                                "kind": "DataQuery",
+                                "group": "prometheus",
+                                "version": "v0",
+                                "datasource": {
+                                  "name": "prometheus"
+                                },
+                                "spec": {
+                                  "editorMode": "code",
+                                  "expr": "(sum(increase(http_requests_total{handler=\"donations\",code=~\"5..\"}[5m])) / sum(increase(http_requests_total{handler=\"donations\"}[5m])) / 0.005 * 100) or vector(0)",
+                                  "instant": true,
+                                  "legendFormat": "Budget consumido",
+                                  "range": false
+                                }
+                              },
+                              "refId": "A",
+                              "hidden": false
+                            }
+                          }
+                        ],
+                        "transformations": [],
+                        "queryOptions": {}
+                      }
+                    },
+                    "vizConfig": {
+                      "kind": "VizConfig",
+                      "group": "stat",
+                      "version": "13.2.0",
+                      "spec": {
+                        "options": {
+                          "colorMode": "value",
+                          "graphMode": "area",
+                          "justifyMode": "center",
+                          "orientation": "auto",
+                          "percentChangeColorMode": "standard",
+                          "reduceOptions": {
+                            "calcs": [
+                              "lastNotNull"
+                            ],
+                            "fields": "",
+                            "values": false
+                          },
+                          "showPercentChange": false,
+                          "textMode": "valueAndName",
+                          "wideLayout": true
+                        },
+                        "fieldConfig": {
+                          "defaults": {
+                            "unit": "percent",
+                            "decimals": 2,
+                            "min": 0,
+                            "thresholds": {
+                              "mode": "absolute",
+                              "steps": [
+                                {
+                                  "value": 0,
+                                  "color": "green"
+                                },
+                                {
+                                  "value": 50,
+                                  "color": "yellow"
+                                },
+                                {
+                                  "value": 100,
+                                  "color": "red"
+                                }
+                              ]
+                            },
+                            "color": {
+                              "mode": "thresholds"
+                            }
+                          },
+                          "overrides": []
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "layout": {
+                "kind": "GridLayout",
+                "spec": {
+                  "items": [
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 0,
+                        "width": 6,
+                        "height": 7,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-1"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 6,
+                        "y": 0,
+                        "width": 6,
+                        "height": 7,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-2"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 12,
+                        "y": 0,
+                        "width": 6,
+                        "height": 7,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-3"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 12,
+                        "y": 7,
+                        "width": 12,
+                        "height": 10,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-5"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 7,
+                        "width": 12,
+                        "height": 10,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-4"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 18,
+                        "y": 0,
+                        "width": 6,
+                        "height": 7,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-6"
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "links": [],
+              "liveNow": false,
+              "preload": false,
+              "tags": [
+                "SolidaryTech",
+                "SRE",
+                "SLI",
+                "SLO",
+                "donation-service",
+                "Error Budget"
+              ],
+              "timeSettings": {
+                "timezone": "browser",
+                "from": "now-6h",
+                "to": "now",
+                "autoRefresh": "10s",
+                "autoRefreshIntervals": [
+                  "5s",
+                  "10s",
+                  "30s",
+                  "1m",
+                  "5m",
+                  "15m",
+                  "30m",
+                  "1h",
+                  "2h",
+                  "1d"
+                ],
+                "hideTimepicker": false,
+                "fiscalYearStartMonth": 0
+              },
+              "title": "SRE - Disponibilidade e Error Budget | donation-service",
+              "variables": []
+            }
+          }
   additionalDataSources:
   - name: Loki
     type: loki
