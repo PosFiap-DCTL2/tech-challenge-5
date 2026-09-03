@@ -175,6 +175,3 @@ jobs:
 
       - name: Aplicar o Job de init
         run: kubectl apply -f ./Terraform/Initsql/job.yaml
-
-      - name: Aguardar conclusão do Job
-        run: kubectl wait --for=condition=complete job/db-init-job --timeout=300s
