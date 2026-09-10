@@ -55,6 +55,13 @@ jobs:
       - name: Adicionar cluster EKS ao kubeconfig
         run: aws eks update-kubeconfig --name clusterpos --region us-east-1
 
+      - name: Instalar cluster-autoscaler
+        run: |
+          helm repo add autoscaler https://kubernetes.github.io/autoscaler
+          helm repo update
+
+          helm install cluster-autoscaler autoscaler/cluster-autoscaler --namespace kube-system --set autoDiscovery.clusterName=clusterpos  --set awsRegion=us-east-1 --set rbac.serviceAccount.create=true
+
       - name: Instalar Metrics Server
         run: kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 
@@ -74,13 +81,6 @@ jobs:
           kubectl create namespace loki
           kubectl create namespace kube-prometheus-stack
           kubectl apply -f ./pvc.yaml
-
-      - name: Instalar cluster-autoscaler
-        run: |
-          helm repo add autoscaler https://kubernetes.github.io/autoscaler
-          helm repo update
-
-          helm install cluster-autoscaler autoscaler/cluster-autoscaler --namespace kube-system --set autoDiscovery.clusterName=clusterpos  --set awsRegion=us-east-1 --set rbac.serviceAccount.create=true
 
       - name: Adicionar Prometheus Stack ( Grafana + Prometheus + Alertmanager )
         working-directory: ./gitops
