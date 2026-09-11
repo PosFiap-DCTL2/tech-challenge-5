@@ -2062,14 +2062,6 @@ grafana:
     isDefault: false
     jsonData:
       maxLines: 1000
-  - name: Jaeger
-    type: jaeger
-    access: proxy
-    url: http://jaeger-query.jaeger.svc.cluster.local:16686
-    isDefault: false
-    jsonData:
-      tracesToLogsV2:
-        datasourceUid: loki
 prometheus:
   prometheusSpec:
     serviceMonitorSelectorNilUsesHelmValues: false
