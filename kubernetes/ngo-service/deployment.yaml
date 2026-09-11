@@ -30,11 +30,11 @@ spec:
                 name: ngo-configmap
           resources:
             requests:
-              cpu: "50m"
-              memory: "128Mi"
-            limits:
-              cpu: "250m"
+              cpu: "10m"
               memory: "256Mi"
+            limits:
+              cpu: "50m"
+              memory: "512Mi"
           readinessProbe:
             httpGet:
               path: /health

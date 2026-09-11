@@ -33,10 +33,10 @@ spec:
                 name: donation-configmap
           resources:
             requests:
-              cpu: "100m"
-              memory: "128Mi"
+              cpu: "10m"
+              memory: "256Mi"
             limits:
-              cpu: "500m"
+              cpu: "50m"
               memory: "512Mi"
           readinessProbe:
             httpGet:
