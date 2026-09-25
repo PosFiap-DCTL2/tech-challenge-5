@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: donation-service
-          image: 498686972093.dkr.ecr.us-east-1.amazonaws.com/tech5/donation-service:d8d218ad3bdfca5fe9cde9d9844b691bedc49e50
+          image: 498686972093.dkr.ecr.us-east-1.amazonaws.com/tech5/donation-service:8b0d0424822e2d55a5ac3c563829d8c6f5475db8
           imagePullPolicy: Always
           ports:
             - name: http
