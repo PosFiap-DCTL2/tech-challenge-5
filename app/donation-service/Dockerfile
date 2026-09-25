@@ -32,14 +32,10 @@ ENV DD_SERVICE="donation-service" \
     DD_PROFILING_ENABLED="true" \
     DD_LOGS_INJECTION="true" \
     DD_RUNTIME_METRICS_ENABLED="true" \
-    DD_TRACE_PROPAGATION_STYLE="tracecontext,datadog"
+    DD_TRACE_PROPAGATION_STYLE="tracecontext,datadog" \
+    DD_AGENT_HOST="alloy.alloy.svc.cluster.local" \
+    DD_TRACE_AGENT_PORT="8126"    
 
-# Variáveis para OpenTelemetry (OTel / OTLP) e comunicação com Grafana Alloy
-ENV OTEL_SERVICE_NAME="donation-service" \
-    OTEL_TRACES_EXPORTER="otlp" \
-    DD_TRACE_OTEL_ENABLED="true" \
-    OTEL_EXPORTER_OTLP_ENDPOINT="http://alloy.alloy.svc.cluster.local:4318" \
-    OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
 
 USER 1001
 
