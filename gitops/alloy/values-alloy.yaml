@@ -231,11 +231,14 @@ alloy:
       otelcol.receiver.datadog "default" {
         endpoint = "0.0.0.0:8126"
 
+        trace_id_cache {
+          size = 1000
+        }
+
         output {
           traces = [otelcol.processor.batch.default.input]
         }
       }
-      
       otelcol.receiver.otlp "default" {
         grpc {
           endpoint = "0.0.0.0:4317"
