@@ -17,6 +17,7 @@ WORKDIR /app
 COPY --from=builder /usr/local/lib/python3.9/site-packages /usr/local/lib/python3.9/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 COPY app.py .
+COPY generate-traffic.sh .
 
 RUN groupadd --gid 1001 appgroup && \
     useradd --uid 1001 --gid appgroup --no-create-home --shell /sbin/nologin appuser
