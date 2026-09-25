@@ -15,6 +15,7 @@ alloy:
   # Sem essa flag o Alloy falha ao carregar o config.
   extraArgs:
     - --feature.community-components.enabled
+    - --stability.level=experimental
 
   # DD_API_KEY: Secret datadog-api-key (namespace alloy)
   # NODE_NAME: nó onde o pod roda (cada pod coleta só o seu nó)
@@ -38,6 +39,10 @@ alloy:
     - name: otlp-http
       port: 4318
       targetPort: 4318
+      protocol: "TCP"
+    - name: datadog-traces
+      port: 8126
+      targetPort: 8126
       protocol: "TCP"
 
   configMap:
@@ -221,6 +226,17 @@ alloy:
       //
       // Fluxo: receiver.otlp -> processor.batch -> exporter.datadog
       // =======================================================================
+
+      // Recebe traces nativos do dd-trace-go na porta 8126
+      
+      otelcol.receiver.datadog "default" {
+        endpoint            = "0.0.0.0:8126"
+        trace_id_cache_size = 1000
+
+        output {
+          traces = [otelcol.processor.batch.default.input]
+        }
+      }
 
       otelcol.receiver.otlp "default" {
         grpc {

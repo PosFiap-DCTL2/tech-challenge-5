@@ -32,6 +32,19 @@ COPY . .
 ENV PATH=/root/.local/bin:$PATH
 ENV PORT=8081
 
+# Variáveis para Datadog APM & AIOps (Watchdog / Applied Intelligence)
+ENV DD_SERVICE="ngo-service" \
+    DD_ENV="hackathon" \
+    DD_VERSION="1.0.0" \
+    DD_LOGS_INJECTION="true"
+
+# Variáveis para OpenTelemetry (OTel / OTLP) e comunicação com Grafana Alloy
+ENV OTEL_SERVICE_NAME="ngo-service" \
+    OTEL_EXPORTER_OTLP_ENDPOINT="http://alloy.alloy.svc.cluster.local:4318" \
+    OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf" \
+    DD_TRACE_OTLP_ENABLED="true" \
+    OTEL_RESOURCE_ATTRIBUTES="deployment.environment=hackathon,service.version=1.0.0"
+
 # Expõe a porta que o edital pediu
 EXPOSE 8081
 
