@@ -42,7 +42,8 @@ ENV DD_SERVICE="ngo-service" \
 ENV OTEL_SERVICE_NAME="ngo-service" \
     OTEL_EXPORTER_OTLP_ENDPOINT="http://alloy.alloy.svc.cluster.local:4318" \
     OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf" \
-    DD_TRACE_OTLP_ENABLED="true"
+    DD_TRACE_OTLP_ENABLED="true" \
+    OTEL_RESOURCE_ATTRIBUTES="deployment.environment=hackathon,service.version=1.0.0"
 
 # Expõe a porta que o edital pediu
 EXPOSE 8081
