@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: volunteer-service
-          image: 359031249197.dkr.ecr.us-east-1.amazonaws.com/tech5/volunteer-service:07881e43f0c898f99ff4ebee8866a5cd2dac398c
+          image: 498686972093.dkr.ecr.us-east-1.amazonaws.com/tech5/volunteer-service:d84a0806dc5dbe6176c3b419dbaf752ad3d53d16
           imagePullPolicy: Always
           ports:
             - name: http
