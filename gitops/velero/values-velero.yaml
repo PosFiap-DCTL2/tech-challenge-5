@@ -37,7 +37,7 @@ configuration:
   backupStorageLocation:
     - name: default
       provider: aws
-      bucket: s3-velero-bucket-tech05-backup
+      bucket: s3-velero-bucket-tech05-backup2
       prefix: clusterpos
       default: true
       config:
